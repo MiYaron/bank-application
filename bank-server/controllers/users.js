@@ -5,49 +5,44 @@ import { sendVerificationCode } from "../utils/mailing.js";
 
 async function register(req, res) {
     const userData = req.body;
-    const validation = await registerationValidations(userData);
 
-    if (validation.status != 200) {
-        return res.status(validation.status).send(validation.message);
-    }
-
-    const encryptedPassword = await encryptPassword(userData.password, 10);
+    const encryptedPassword = await encryptPassword(userData.password);
     userData.password = encryptedPassword;
 
     const user = new User(userData);
 
-    const generatedCode = generateCode(user);
+    try {
+        await user.save();
+    } catch (error) {
+        if (error.code === 11000) {
+            return res.status(409).send({ message: "Email already in use" });
+        } else {
+            return res.status(500).send({ message: "Somthing went wrong" });
+        }
+    }
 
-    const link = `http://10.10.1.185:3001/auth/verify?verification_code=${generatedCode}&user_id=${user._id}`;
+    const url = process.env.SERVER_URL + ":" + process.env.SERVER_PORT;
 
-    // sendVerificationCode(userData.email, userData.name, link);
+    const link = `${url}/api/auth/verify?user_id=${user.id}`;
 
-    // res.status(200).send("Verification mail was sent");
+    sendVerificationCode(userData.email, userData.name, link);
 
-    res.status(200).send(link);
+    res.status(200).send({ message: "Verification mail was sent" });
 }
 
 async function signup(req, res) {
-    const code = req.query["verification_code"];
-    const userId = req.query["user_id"];
+    const id = req.query["user_id"];
 
-    const user = waitingList[userId];
-    if (!user) {
-        return res.status(410).send("Verfication key is expired");
-    } else if (!authenticateUser(user, code)) {
-        return res.status(400).send("Verification key is not valid");
+    if (
+        !(await User.findOneAndUpdate(
+            { _id: id, status: "Pending" },
+            { status: "Active" }
+        ))
+    ) {
+        return res.status(410).send({ message: "Verfication expired" });
     }
 
-    try {
-        await user.save();
-        res.status(302).redirect("https://www.google.com/");
-    } catch (error) {
-        if (error.code === 11000) {
-            res.status(409).send("Email already in use");
-        } else {
-            res.status(500).send("Somthing went wrong");
-        }
-    }
+    res.status(303).redirect("https://www.google.com/");
 }
 
 async function signin(req, res) {
@@ -55,8 +50,12 @@ async function signin(req, res) {
 
     const user = await User.findOne({ email });
 
-    if (!user || !(await comparePasswords(password, user.password))) {
-        return res.status(400).send("Wrong email or password");
+    if (
+        !user ||
+        user.status != "Active" ||
+        !(await comparePasswords(password, user.password))
+    ) {
+        return res.status(400).send({ message: "Wrong email or password" });
     }
 
     const tokenData = { id: user._id, email: user.email, role: user.role };
@@ -65,12 +64,7 @@ async function signin(req, res) {
         expiresIn: "1h",
     });
 
-    res.cookie("auth_token", token, {
-        httpOnly: true,
-        maxAge: 1000 * 60 * 60,
-    });
-
-    res.status(200).send("Success");
+    res.status(200).send({ token });
 }
 
 async function getDetails(req, res) {}
@@ -79,41 +73,12 @@ function modifyDetails(req, res) {}
 
 const waitingList = {};
 
-function generateCode(user) {
-    const code = Math.floor(Math.random() * (99999 - 10000) + 10000);
-    user.auth = code;
-
-    waitingList[user.id] = user;
-
-    setTimeout(() => {
-        delete waitingList[user.id];
-    }, 900000);
-
-    return code;
-}
-
-function authenticateUser(user, code) {
-    if (user.auth == code) {
-        return true;
-    }
-
-    return false;
-}
-
-async function encryptPassword(password, rounds) {
-    return await bcrypt.hash(password, rounds);
+async function encryptPassword(password) {
+    return await bcrypt.hash(password, 10);
 }
 
 async function comparePasswords(dbPassword, userPassword) {
     return await bcrypt.compare(dbPassword, userPassword);
-}
-
-async function registerationValidations(userData) {
-    if (await User.findOne({ email: userData.email })) {
-        return { status: 409, message: "Email already in use" };
-    }
-
-    return { status: 200, message: "OK" };
 }
 
 export default {
