@@ -1,38 +1,222 @@
-.App {
-  text-align: center;
+
+@import url('https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+:root {
+    --gradient-peach: linear-gradient(150deg, rgba(237,66,100,1) 0%, rgba(255,237,188,1) 100%);
+    --gradient-accept: linear-gradient(310deg, rgba(99,181,156,1) 0%, rgba(66,237,152,1) 100%);
+    --gradient-decline: linear-gradient(310deg, rgba(170,37,86,1) 0%, rgba(237,66,100,1) 100%);
+
+    --solid-pink: #e29fa6;
+    --solid-brown: #743A3F;
+    --solid-gray: #787878;
+    --solid-black: #353535;
+    --solid-green: #55CD9A;
+    --solid-red: #ED4264;
+
+    font-size: 20px;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+* {
+    font-family: "Roboto", sans-serif;
+    color:  var(--text-black);
+    text-decoration: none;
+    box-sizing: border-box;
+    padding: 0px;
+    margin: 0px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+
+main {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.dashboard {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    height: 35vh;
+    margin-bottom: 3vh;
+
+    .backdrop {
+        position: absolute;
+        right: 2.5vw;
+        left: 2.5vw;
+        background: rgb(237,66,100);
+        background: linear-gradient(150deg, rgba(237,66,100,1) 0%, rgba(255,237,188,1) 100%);   
+        border-radius: 45px;
+        width: 95vw;
+        height: 30vh;
+        z-index: 1;
+    }
+
+    .content {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+
+        width: 100%;
+        height: 100%;
+        padding: 2vh 5vw;
+        z-index: 2;
+
+        .header {
+            width: 100%;
+            display: flex;
+            gap: 15px;
+            align-items: left;
+            margin-bottom: 40px;
+            
+            #exit-button {
+                cursor:pointer;
+                border-radius: 60px;
+                background: white;
+                background-image: url('./assets/images/signout-button.svg');
+                background-size: 70%; 
+                background-repeat: no-repeat; 
+                background-position: center; 
+                opacity: 0.75; 
+                width: 60px;
+                height: 60px;
+                box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+
+            }
+
+            p {
+                display: flex;
+                align-items: center;
+                font-size: 0.9rem;
+                font-weight: 300;
+                color: white;
+                text-shadow: 0px 2px 5px rgba(0,0,0,0.15);            
+            }
+
+            #username {
+                margin-left: 5px;
+                font-weight: 500;
+            }
+        }
+    
+        .card {
+            width: 100%;
+            background: white;
+            border-radius: 25px;
+            box-shadow: rgba(99, 99, 99, 0.3) 0px 2px 8px 0px;
+            
+            h3 {
+                color: var(--solid-pink);
+                font-size: 0.8rem;
+                font-weight: 600;
+                padding-top: 20px;
+                padding-left: 25px;
+            }
+    
+            p {
+                width: 100%;
+                text-align: center;
+                font-size: 2.5rem;
+                color: var(--solid-brown);
+                margin: 25px 0px;
+            }
+            
+            #card-footer {
+                display: flex;
+                justify-content: right;
+                width: 100%;
+                height: 45px;
+                border-top: 1px solid rgba(110, 110, 110, 0.2);
+            }
+
+            #send-button {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                background: var(--gradient-accept);
+                border-bottom-right-radius: 25px;
+                border-left: 1px solid rgba(110, 110, 110, 0.2);
+                font-size: 0.8rem;
+                color: white;
+                width: 50%;
+            }
+        }
+    }
 }
 
-.App-link {
-  color: #61dafb;
-}
+#transactions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+    padding: 5vw;
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+    h2 {
+        font-size: 1rem;
+        color: var(--solid-black);
+        margin-bottom: 30px;
+        width: 100%;
+    }
+
+    .tx-item {
+        display: flex;
+        width: 100%;
+        margin-bottom: 35px;
+
+        .tx-icon {
+            border-radius: 10px;
+            height: 40px;
+            width: 40px;
+            margin-right: 20px;
+            box-shadow: rgba(99, 99, 99, 0.3) 0px 2px 8px 0px;
+        }
+
+        .tx-icon.positive {
+            background-image: url('./assets/images/arrow-up.png'), var(--gradient-accept);
+            background-size: 55%, cover;
+            background-repeat: no-repeat; 
+            background-position: center; 
+        }
+
+        .tx-icon.negative {
+            background-image: url('./assets/images/arrow-down.png'), var(--gradient-decline);
+            background-size: 55%, cover;
+            background-repeat: no-repeat; 
+            background-position: center; 
+        }
+        .tx-data {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            
+            p {
+                font-size: 0.6rem;
+                color: var(--solid-gray)
+            }
+
+            .username {
+                font-size: 0.9rem;
+                font-weight: 600;
+                color: var(--solid-black);
+
+            }
+        }
+
+        .amount {
+            display: flex;
+            align-items: center;
+            margin-left: auto;
+            font-size: 0.9rem;
+        }
+
+        .amount.positive {
+            color: var(--solid-green);
+        }
+
+        
+        .amount.negative {
+            color: var(--solid-red);
+        }
+    }
 }

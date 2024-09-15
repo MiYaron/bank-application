@@ -55,10 +55,16 @@ async function signin(req, res) {
         user.status != "Active" ||
         !(await comparePasswords(password, user.password))
     ) {
+        console.log(user);
         return res.status(400).send({ message: "Wrong email or password" });
     }
 
-    const tokenData = { id: user._id, email: user.email, role: user.role };
+    const tokenData = {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+    };
 
     const token = jwt.sign(tokenData, process.env.TOKEN_HASH, {
         expiresIn: "1h",

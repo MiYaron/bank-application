@@ -3,6 +3,17 @@ import mongoose from "mongoose";
 import Transaction from "../models/transaction.js";
 import User from "../models/user.js";
 
+async function getData(req, res) {
+    const userId = req.user.id;
+
+    const balance = (await User.findById(userId)).balance;
+
+    const transactions = await Transaction.find({
+        $or: [{ "from.id": userId }, { "to.id": userId }],
+    });
+
+    res.status(200).send({ balance, transactions });
+}
 async function sendMoney(req, res) {
     const { to, amount } = req.body;
     const user = await User.findById(req.user.id);
@@ -60,5 +71,6 @@ async function getTransactions(req, res) {
 
 export default {
     sendMoney,
+    getData,
     getTransactions,
 };
