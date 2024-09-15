@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
-import { redirect } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 
 import TransactionsList from "../assets/components/txlist";
+import BalanceCard from "../assets/components/balance";
 
 const Dashboard = () => {
+    const navigate = useNavigate();
     const [balance, setBalance] = useState(0);
     const [transactions, setTransactions] = useState([]);
     const [user, setUser] = useState(
@@ -37,11 +39,12 @@ const Dashboard = () => {
         };
 
         getData();
-    }, []);
+    }, [balance]);
 
-    function signout() {
+    function Signout() {
         sessionStorage.removeItem("token");
-        return redirect("/");
+
+        navigate(0);
     }
 
     return (
@@ -50,18 +53,12 @@ const Dashboard = () => {
                 <div className="backdrop"></div>
                 <div className="content">
                     <div className="header">
-                        <div id="exit-button" onClick={signout}></div>
+                        <div id="exit-button" onClick={Signout}></div>
                         <p>
                             Welcome <span id="username">{user.name},</span>
                         </p>
                     </div>
-                    <div className="card">
-                        <h3>YOUR BALANCE</h3>
-                        <p>{balance}$</p>
-                        <div id="card-footer">
-                            <div id="send-button">Send Money</div>
-                        </div>
-                    </div>
+                    <BalanceCard balance={balance} setBalance={setBalance} />
                 </div>
             </div>
             <TransactionsList transactions={transactions} user />
