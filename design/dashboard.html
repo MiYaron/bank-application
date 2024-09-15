@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css" />
+    <title>Document</title>
+</head>
+<body>
+    <main>
+        <div class="dashboard">
+            <div class="backdrop"></div>
+            <div class="content">
+                <div class = header>
+                    <div id="exit-button"></div>
+                    <p>Welcome <span id="username">User,</span></p>
+
+                </div>
+                
+                <div class="card">
+                    <h3>YOUR BALANCE</h3>
+                    <p>500$</p>
+                    <div id="card-footer"><div id="send-button">Send Money</div></div>
+                    
+                </div>
+            </div>
+        </div>
+
+        <div id="transactions">
+            <h2>Transactions</h2>
+            <div class="component">
+                <div class="tx-icon positive"></div>
+                <div class="tx-data">
+                    <p>From:</p>
+                    <p class="username">USER2</p>
+                </div>
+                <p class="amount positive">+50$</p>
+            </div>
+
+
+            <div class="component">
+                <div class="tx-icon negative"></div>
+                <div class="tx-data">
+                    <p>To:</p>
+                    <p class="username">USER1</p>
+                </div>
+                <p class="amount negative">-20$</p>
+            </div>
+
+
+            <div class="component">
+                <div class="tx-icon positive"></div>
+                <div class="tx-data">
+                    <p>From:</p>
+                    <p class="username">USER5</p>
+                </div>
+                <p class="amount positive">+30$</p>
+            </div>
+
+
+            <div class="component">
+                <div class="tx-icon positive"></div>
+                <div class="tx-data">
+                    <p>From:</p>
+                    <p class="username">USER3</p>
+                </div>
+                <p class="amount positive">+100$</p>
+            </div>
+
+
+            <div class="component">
+                <div class="tx-icon negative"></div>
+                <div class="tx-data">
+                    <p>To:</p>
+                    <p class="username">USER2</p>
+                </div>
+                <p class="amount negative">-150$</p>
+            </div>
+
+            <p>Show More</p>
+        </div>
+    </main>
+</body>
+</html>
