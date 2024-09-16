@@ -41,7 +41,7 @@ const Dashboard = () => {
         getData();
     }, [balance]);
 
-    function Signout() {
+    function signout() {
         sessionStorage.removeItem("token");
 
         navigate(0);
@@ -53,15 +53,19 @@ const Dashboard = () => {
                 <div className="backdrop"></div>
                 <div className="content">
                     <div className="header">
-                        <div id="exit-button" onClick={Signout}></div>
+                        <div id="exit-button" onClick={signout}></div>
                         <p>
-                            Welcome <span id="username">{user.name},</span>
+                            Welcome <span id="username">{user.name}</span>,
                         </p>
                     </div>
                     <BalanceCard balance={balance} setBalance={setBalance} />
                 </div>
             </div>
-            <TransactionsList transactions={transactions} user />
+            <TransactionsList
+                transactions={transactions}
+                setTransactions={setTransactions}
+                user
+            />
         </main>
     );
 };

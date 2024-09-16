@@ -1,15 +1,70 @@
-function TransactionsList({ transactions }) {
+import { useState, useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
+
+function TransactionsList({ transactions, setTransactions }) {
+    const [lastItem, setLastItem] = useState("");
+    const [user, setUser] = useState(
+        jwtDecode(sessionStorage.getItem("token"))
+    );
+
+    useEffect(() => {
+        if (transactions.length > 0) {
+            setLastItem(transactions[transactions.length - 1]._id);
+        }
+    }, [transactions]);
+
+    const fold = async () => {
+        setTransactions(transactions.slice(0, 5));
+    };
+
+    const showMore = async () => {
+        const response = await fetch(
+            `http://localhost:3001/api/transactions?lastItem=${lastItem}`,
+            {
+                headers: {
+                    Authentication: `Bearer ${sessionStorage.getItem("token")}`,
+                },
+            }
+        );
+
+        const data = await response.json();
+        const addedTransactions = data.transactions;
+
+        if (addedTransactions.length > 0) {
+            addedTransactions.map((transaction) => {
+                if (transaction.from.id === user.id) {
+                    transaction.amount *= -1;
+                }
+            });
+
+            setTransactions((prevTransactions) => [
+                ...prevTransactions,
+                ...addedTransactions,
+            ]);
+        }
+    };
+
+    if (transactions.length == 0) {
+        return (
+            <div id="transactions">
+                <p>No transactions to show</p>
+            </div>
+        );
+    }
+
     return (
         <div id="transactions">
-            <h2>Transactions</h2>
-            {transactions.map((transaction) => (
+            <h2 onClick={fold}>Transactions ↑</h2>
+            {transactions.map((transaction, index) => (
                 <TransactionItem
                     key={transaction._id}
                     transaction={transaction}
                 />
             ))}
 
-            <p>Show More</p>
+            <p id="show-more" onClick={showMore}>
+                Show More ↓
+            </p>
         </div>
     );
 }

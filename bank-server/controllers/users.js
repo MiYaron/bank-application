@@ -55,7 +55,6 @@ async function signin(req, res) {
         user.status != "Active" ||
         !(await comparePasswords(password, user.password))
     ) {
-        console.log(user);
         return res.status(400).send({ message: "Wrong email or password" });
     }
 

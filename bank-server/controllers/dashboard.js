@@ -10,13 +10,23 @@ async function getData(req, res) {
 
     const transactions = await Transaction.find({
         $or: [{ "from.id": userId }, { "to.id": userId }],
-    });
+    })
+        .sort({ _id: -1 })
+        .limit(5);
 
     res.status(200).send({ balance, transactions });
 }
+
 async function sendMoney(req, res) {
     const { to, amount } = req.body;
     const user = await User.findById(req.user.id);
+    if (user.email === to) {
+        return res.status(400).send({ message: "Cant send money to yourself" });
+    }
+
+    if (amount == 0) {
+        return res.status(400).send({ message: "Amount can not be zero" });
+    }
 
     if (amount > user.balance) {
         return res
@@ -61,12 +71,27 @@ async function sendMoney(req, res) {
 
 async function getTransactions(req, res) {
     const userId = req.user.id;
+    const lastItem = req.query.lastItem ? req.query.lastItem : null;
 
-    const transactions = await Transaction.find({
-        $or: [{ "from.id": userId }, { "to.id": userId }],
-    });
+    try {
+        const query = {
+            $or: [{ "from.id": userId }, { "to.id": userId }],
+        };
 
-    res.status(200).send({ transactions });
+        if (lastItem) {
+            query._id = { $lt: lastItem };
+        }
+
+        const transactions = await Transaction.find(query)
+            .sort({ _id: -1 })
+            .limit(3);
+
+        res.status(200).send({ transactions });
+    } catch (error) {
+        res.status(500).send({
+            error: "An error occurred while fetching transactions.",
+        });
+    }
 }
 
 export default {
