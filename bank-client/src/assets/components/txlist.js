@@ -1,11 +1,8 @@
 import { useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 
-function TransactionsList({ transactions, setTransactions }) {
+function TransactionsList({ userId, transactions, setTransactions }) {
     const [lastItem, setLastItem] = useState("");
-    const [user, setUser] = useState(
-        jwtDecode(sessionStorage.getItem("token"))
-    );
 
     useEffect(() => {
         if (transactions.length > 0) {
@@ -32,7 +29,7 @@ function TransactionsList({ transactions, setTransactions }) {
 
         if (addedTransactions.length > 0) {
             addedTransactions.map((transaction) => {
-                if (transaction.from.id === user.id) {
+                if (transaction.from.id === userId) {
                     transaction.amount *= -1;
                 }
             });

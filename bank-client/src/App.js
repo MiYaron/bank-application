@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Navigate, Routes, Route } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import "./App.css";
@@ -8,7 +8,7 @@ import Dashboard from "./pages/Dashboard";
 
 function App() {
     const [token, setToken] = useState(sessionStorage.getItem("token"));
-    const role = token ? jwtDecode(token).role : "guest";
+    const user = token ? jwtDecode(token) : null;
 
     return (
         <>
@@ -16,8 +16,8 @@ function App() {
                 <Route
                     path="/"
                     element={
-                        role === "client" ? (
-                            <Dashboard />
+                        user?.role === "client" ? (
+                            <Dashboard user={user} />
                         ) : (
                             <Signin setToken={setToken} />
                         )

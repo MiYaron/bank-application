@@ -5,13 +5,10 @@ import { jwtDecode } from "jwt-decode";
 import TransactionsList from "../assets/components/txlist";
 import BalanceCard from "../assets/components/balance";
 
-const Dashboard = () => {
+const Dashboard = ({ user }) => {
     const navigate = useNavigate();
     const [balance, setBalance] = useState(0);
     const [transactions, setTransactions] = useState([]);
-    const [user, setUser] = useState(
-        jwtDecode(sessionStorage.getItem("token"))
-    );
 
     useEffect(() => {
         const getData = async () => {
@@ -62,9 +59,9 @@ const Dashboard = () => {
                 </div>
             </div>
             <TransactionsList
+                userId={user.id}
                 transactions={transactions}
                 setTransactions={setTransactions}
-                user
             />
         </main>
     );
